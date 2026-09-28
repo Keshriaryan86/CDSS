@@ -1,0 +1,40 @@
+# Environment & Secrets
+.env
+*.env
+.env.local
+.env.*.local
+
+# TLS Certificates (never commit private keys)
+backend/cert.pem
+backend/key.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite
+*.sqlite3
+*.zip
+
+# Node.js / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+backend/cdss_model.pkl
+backend/cdss_model.pkl
+backend/cdss_model.pkl
+backend/*.pkl
