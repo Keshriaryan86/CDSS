@@ -20,6 +20,11 @@ export default function Layout() {
     navigate('/login', { replace: true });
   };
 
+  const handleNav = (path: string) => {
+    setMenuOpen(false);
+    navigate(path);
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -51,7 +56,7 @@ export default function Layout() {
       )}
 
       {/* ─── LIQUID GLASS TOP NAVIGATION ─────────────────────────────────── */}
-      <header className="relative z-20 flex items-start justify-between px-5 pt-6 sm:px-8 sm:pt-8 md:px-16 lg:px-20">
+      <header className="relative z-50 flex items-start justify-between px-5 pt-6 sm:px-8 sm:pt-8 md:px-16 lg:px-20">
         {/* Left: logo */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer group mt-1">
           <svg
@@ -64,7 +69,7 @@ export default function Layout() {
 
         {/* Center nav: absolutely spans the full header, centers pill both axes.
             pointer-events-none prevents blocking logo/dropdown clicks. */}
-        <nav className="hidden md:flex absolute inset-0 items-start justify-center pt-6 sm:pt-8 pointer-events-none">
+        <nav className="hidden xl:flex absolute inset-0 items-start justify-center pt-6 sm:pt-8 pointer-events-none">
           <div className="flex items-center space-x-8 px-8 py-3 rounded-full liquid-glass pointer-events-auto">
             <NavLink
               to="/"
@@ -98,15 +103,13 @@ export default function Layout() {
         </nav>
 
         {/* Right: language switcher + desktop dropdown + mobile hamburger */}
-        <div className="flex items-start mt-1">
-          {/* Language Switcher */}
-          <div className="hidden md:flex">
-            <LanguageSwitcher />
-          </div>
+        <div className="flex items-center gap-2 mt-1">
+          {/* Language Switcher - Always visible in header */}
+          <LanguageSwitcher />
 
           {/* Desktop dropdown */}
-          <div className="hidden md:block" ref={dropdownRef}>
-            <div className="relative">
+          <div className="hidden xl:inline-flex items-center" ref={dropdownRef}>
+            <div className="relative -top-24">
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -149,12 +152,13 @@ export default function Layout() {
             </div>
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger — z-[10000] keeps X button above the overlay */}
           <button
             type="button"
             aria-label="Toggle menu"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden h-10 w-10 rounded-full liquid-glass z-50 flex items-center justify-center cursor-pointer relative"
+            style={{ zIndex: 10000 }}
+            className="xl:hidden h-10 w-10 rounded-full liquid-glass flex items-center justify-center cursor-pointer relative -top-36"
           >
             <Menu
               className={`absolute h-5 w-5 text-white/80 transition-all duration-300 transform ${menuOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
@@ -170,53 +174,67 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* ─── MOBILE MENU OVERLAY ───────────────────────────────────────── */}
+      {/* ─── MOBILE MENU OVERLAY ─── z-[9999] so it sits above the z-50 header ── */}
       <div
-        className={`fixed inset-0 z-10 md:hidden bg-black/80 backdrop-blur-xl flex flex-col items-center justify-center gap-8 transition-opacity duration-500 ease-out ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        style={{ zIndex: 9999 }}
+        className={`fixed inset-0 xl:hidden bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center gap-6 transition-all duration-300 ease-out ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
       >
         <div
-          className={`flex flex-col items-center gap-8 transition-transform duration-500 ease-out ${menuOpen ? 'translate-y-0' : '-translate-y-8'
+          className={`flex flex-col items-center gap-6 w-full max-w-xs px-6 transition-transform duration-300 ease-out ${menuOpen ? 'translate-y-0 scale-100' : '-translate-y-4 scale-95'
             }`}
         >
-          <Link
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className="text-2xl font-medium text-white hover:text-white/80 transition-colors"
+          <div className="flex items-center gap-2 mb-2 px-4 py-2 rounded-full liquid-glass text-white/80 text-xs">
+            <CircleUserRound className="h-4 w-4 text-cyan-400" strokeWidth={1.5} />
+            <span>{username || 'Doctor Account'}</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handleNav('/')}
+            className="text-xl font-medium text-white hover:text-cyan-300 transition-colors w-full text-center py-2 cursor-pointer"
           >
             {t('nav.home')}
-          </Link>
-          <Link
-            to="/consultation"
-            onClick={() => setMenuOpen(false)}
-            className="text-2xl font-medium text-white hover:text-white/80 transition-colors"
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('/consultation')}
+            className="text-xl font-medium text-white hover:text-cyan-300 transition-colors w-full text-center py-2 cursor-pointer"
           >
             {t('nav.aiDiagnostic')}
-          </Link>
-          <Link
-            to="/history"
-            onClick={() => setMenuOpen(false)}
-            className="text-2xl font-medium text-white hover:text-white/80 transition-colors"
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('/history')}
+            className="text-xl font-medium text-white hover:text-cyan-300 transition-colors w-full text-center py-2 cursor-pointer"
           >
             {t('nav.patientHistory')}
-          </Link>
-
-          <Link
-            to="/dashboard"
-            onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-3 mt-4"
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('/dashboard')}
+            className="text-xl font-medium text-white hover:text-cyan-300 transition-colors w-full text-center py-2 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <div className="h-10 w-10 rounded-full liquid-glass flex items-center justify-center">
-              <CircleUserRound className="h-5 w-5 text-white/80" strokeWidth={1.5} />
-            </div>
-            <span className="text-sm font-light text-white/60">{t('nav.account')}</span>
-          </Link>
+            <LayoutDashboard className="h-5 w-5 text-cyan-400" strokeWidth={1.5} />
+            <span>{t('nav.doctorPage')}</span>
+          </button>
+
+          <div className="w-full h-px bg-white/10 my-2" />
+
+          <button
+            type="button"
+            onClick={() => { setMenuOpen(false); handleLogout(); }}
+            className="w-full py-3 px-6 rounded-full liquid-glass flex items-center justify-center gap-2 text-red-300 hover:text-red-100 hover:bg-red-500/20 transition-all font-medium cursor-pointer"
+          >
+            <LogOut className="h-5 w-5" strokeWidth={1.5} />
+            <span>{t('nav.logout')}</span>
+          </button>
         </div>
       </div>
 
       {/* ─── MAIN PAGE CONTENT OUTLET (z-10) ──────────────────────────────── */}
       <main
-        className={`relative z-10 flex-1 px-5 sm:px-8 md:px-16 lg:px-20 py-8 max-w-7xl mx-auto w-full transition-opacity duration-300 ${menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        className={`relative z-20 flex-1 px-5 sm:px-8 md:px-16 lg:px-20 py-8 max-w-7xl mx-auto w-full transition-opacity duration-300 ${menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
       >
         <Outlet />

@@ -8,8 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { apiFetch, getUsername } from '../utils/auth';
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000';
-
 /** Per-user localStorage key — prevents cross-user data bleed on shared browsers */
 const localKey = () => `saved_patients__${getUsername()}`;
 

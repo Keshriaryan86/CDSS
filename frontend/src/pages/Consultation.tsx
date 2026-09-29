@@ -30,7 +30,7 @@ const symptomsList = [
 
 import { apiFetch } from '../utils/auth';
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000';
+
 
 async function extractFromText(text: string): Promise<ExtractedData> {
   try {
@@ -72,125 +72,6 @@ async function extractFromText(text: string): Promise<ExtractedData> {
       chiefComplaint: symptoms.slice(0, 2).join(', ') || text.slice(0, 60),
     };
   }
-}
-
-function buildMockResult(form: FormData, extracted: ExtractedData | null) {
-  const extractedSyms = extracted?.symptoms || [];
-  const freeTextLower = (form.freeText || '').toLowerCase();
-
-  // Combine symptoms, giving free text extracted symptoms leading priority
-  const allSymptoms = [...new Set([...extractedSyms, ...form.symptoms])].map(s => s.toLowerCase());
-
-  const has = (term: string) => freeTextLower.includes(term) || allSymptoms.some(s => s.includes(term));
-
-  let diagnoses: { name: string; confidence: number; shap: string[] }[] = [];
-  let redFlags: string[] = [];
-  let treatments: { drug: string; dosage: string; duration: string; referral: string }[] = [];
-
-  const plt = Number(form.platelets) || 0;
-  const spo2 = Number(form.spo2) || 98;
-  const temp = Number(form.temperature) || 37;
-
-  if (has('neck') || has('meningitis') || has('sensorium')) {
-    diagnoses = [
-      { name: 'Bacterial Meningitis', confidence: 0.94, shap: ['Nuchal Rigidity', 'Fever', 'Photophobia'] },
-      { name: 'Viral Encephalitis', confidence: 0.71, shap: ['Altered sensorium'] },
-      { name: 'Acute Migraine', confidence: 0.35, shap: ['Headache'] }
-    ];
-    redFlags.push('⚠️ NEUROLOGICAL EMERGENCY: Nuchal Rigidity / Altered Sensorium Alert');
-    treatments = [
-      { drug: 'Ceftriaxone IV', dosage: '2g IV BD', duration: '7–14 days', referral: 'Immediate Lumbar Puncture & Referral' }
-    ];
-  } else if (has('chest') || has('cardiac') || has('coronary') || has('heart') || (has('breath') && spo2 < 92)) {
-    diagnoses = [
-      { name: 'Acute Coronary Syndrome', confidence: 0.93, shap: ['Chest Pain', 'Shortness of Breath'] },
-      { name: 'Pulmonary Embolism', confidence: 0.68, shap: ['Hypoxia', 'Dyspnea'] },
-      { name: 'Acute Pericarditis', confidence: 0.45, shap: ['Retrosternal discomfort'] }
-    ];
-    redFlags.push('⚠️ CARDIAC / RESPIRATORY EMERGENCY: Urgent ECG & Hospital Referral');
-    treatments = [
-      { drug: 'Oxygen Therapy', dosage: 'High-flow O2', duration: 'Immediate', referral: 'Urgent Referral to Tertiary Care Facility' },
-      { drug: 'Aspirin + Clopidogrel', dosage: '300mg stat each', duration: 'Single Dose', referral: 'ECG within 10 minutes' }
-    ];
-  } else if (has('dengue') || has('rash') || (plt > 0 && plt < 100000)) {
-    diagnoses = [
-      { name: 'Dengue Hemorrhagic Fever', confidence: 0.91, shap: ['Petechial Rash', 'Thrombocytopenia'] },
-      { name: 'Classical Dengue Fever', confidence: 0.74, shap: ['High Fever', 'Retro-orbital pain'] },
-      { name: 'Chikungunya', confidence: 0.52, shap: ['Severe Arthralgia', 'Exanthem'] }
-    ];
-    if (plt > 0 && plt < 100000) redFlags.push(`⚠️ Severe Thrombocytopenia (Platelets: ${plt}/µL) — Dengue Alert`);
-    treatments = [
-      { drug: 'Isotonic Saline IV Hydration', dosage: 'As per NHM Dengue Guideline', duration: '48 hours', referral: 'Daily Platelet & Hematocrit Monitoring' },
-      { drug: 'Paracetamol', dosage: '500mg QDS', duration: '5 days', referral: 'Avoid Aspirin and NSAIDs' }
-    ];
-  } else if (has('pneumonia') || (has('cough') && (has('breath') || has('fever')))) {
-    diagnoses = [
-      { name: 'Community Acquired Pneumonia', confidence: 0.88, shap: ['Productive Cough', 'Fever', 'Dyspnea'] },
-      { name: 'Acute Bronchitis', confidence: 0.64, shap: ['Cough', 'Wheezing'] },
-      { name: 'Pulmonary Tuberculosis', confidence: 0.38, shap: ['Chronic cough'] }
-    ];
-    treatments = [
-      { drug: 'Amoxicillin-Clavulanate', dosage: '625mg BD', duration: '7 days', referral: 'Chest X-Ray (PA view)' },
-      { drug: 'Paracetamol', dosage: '500mg PRN', duration: '5 days', referral: 'Follow-up in 48 hours' }
-    ];
-  } else if (has('typhoid') || has('enteric') || has('step-ladder') || has('step ladder')) {
-    diagnoses = [
-      { name: 'Typhoid Fever', confidence: 0.91, shap: ['Step-ladder Fever', 'Abdominal Discomfort', 'Headache'] },
-      { name: 'Acute Gastroenteritis', confidence: 0.62, shap: ['Fever', 'Diarrhea'] },
-      { name: 'Acute Viral Fever', confidence: 0.45, shap: ['Febrile illness'] }
-    ];
-    treatments = [
-      { drug: 'Azithromycin', dosage: '500mg OD', duration: '7 days', referral: 'Widal test / Blood culture' },
-      { drug: 'Paracetamol', dosage: '500mg TDS', duration: '5 days', referral: 'Hydration and rest' }
-    ];
-  } else if (has('diarrh') || has('vomit') || has('gastro') || has('abdominal')) {
-    diagnoses = [
-      { name: 'Acute Gastroenteritis', confidence: 0.87, shap: ['Watery Stools', 'Vomiting', 'Abdominal Cramps'] },
-      { name: 'Food Poisoning', confidence: 0.66, shap: ['Acute onset diarrhea'] },
-      { name: 'Amoebic Dysentery', confidence: 0.41, shap: ['Abdominal pain'] }
-    ];
-    treatments = [
-      { drug: 'Oral Rehydration Salts (ORS)', dosage: '1 Liter per day after loose stool', duration: 'Until resolved', referral: 'Zinc 20mg OD for 14 days' },
-      { drug: 'Ondansetron', dosage: '4mg BD PRN', duration: '3 days', referral: 'Monitor for dehydration' }
-    ];
-  } else if (has('jaundice') || has('hepatitis') || has('yellow')) {
-    diagnoses = [
-      { name: 'Viral Hepatitis A', confidence: 0.84, shap: ['Jaundice', 'Icterus', 'Anorexia'] },
-      { name: 'Leptospirosis', confidence: 0.65, shap: ['Fever', 'Jaundice'] },
-      { name: 'Acute Cholecystitis', confidence: 0.42, shap: ['Abdominal discomfort'] }
-    ];
-    treatments = [
-      { drug: 'Supportive Care', dosage: 'Rest and High-Carb diet', duration: '4 weeks', referral: 'LFT monitoring' }
-    ];
-  } else {
-    diagnoses = [
-      { name: 'Viral Upper Respiratory Infection', confidence: 0.82, shap: ['Fever', 'Fatigue'] },
-      { name: 'Acute Viral Fever', confidence: 0.65, shap: ['Febrile illness'] },
-      { name: 'Acute Pharyngitis', confidence: 0.44, shap: ['Sore throat'] }
-    ];
-    treatments = [
-      { drug: 'Paracetamol', dosage: '500mg TDS PRN', duration: '3–5 days', referral: 'Symptomatic management as per NHM Guideline 2026' }
-    ];
-  }
-
-  const primary = diagnoses[0].name;
-
-  return {
-    patient: {
-      id: `P-${Math.floor(10000 + Math.random() * 90000)}`,
-      name: form.name.trim() || 'Patient',
-      age: form.age || extracted?.age || '35',
-      sex: form.sex || extracted?.sex || 'Male',
-      vitals: { temp: form.temperature || '37.0', bp: form.bp || '120/80', pulse: form.pulse || '80', spo2: form.spo2 || '98' }
-    },
-    symptoms: allSymptoms.length > 0 ? allSymptoms : ['Fever'],
-    status: redFlags.length > 0 ? 'critical' : 'stable',
-    diagnoses,
-    redFlags,
-    treatments,
-    primaryDiagnosis: primary,
-    timestamp: new Date().toISOString()
-  };
 }
 
 export default function Consultation() {
@@ -292,7 +173,7 @@ export default function Consultation() {
     } catch (err: any) {
       console.error('[CDSS] Diagnostic submission failed:', err);
       // Show a user-visible error instead of silently falling back to mock data
-      alert(`AI Diagnostic failed: ${err?.message || 'Backend unreachable. Please ensure the backend server is running on ${BACKEND}.'}`);
+      alert(`AI Diagnostic failed: ${err?.message || 'Backend unreachable. Please ensure the backend server is running at localhost:8000.'}`);
     } finally {
       setSubmitting(false);
     }

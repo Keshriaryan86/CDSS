@@ -4,8 +4,6 @@ import { Search, User, Clock, Activity, ChevronRight, Filter, AlertTriangle, Shi
 import { useTranslation } from 'react-i18next';
 import { apiFetch, getUsername } from '../utils/auth';
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000';
-
 /** Per-user localStorage key — prevents cross-user data bleed */
 const localKey = () => `saved_patients__${getUsername()}`;
 

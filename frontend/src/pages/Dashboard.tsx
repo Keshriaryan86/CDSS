@@ -18,8 +18,6 @@ const weeklyData = [
   { day: 'Sun', consultations: 22, alerts: 3 },
 ];
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000';
-
 export default function Dashboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
