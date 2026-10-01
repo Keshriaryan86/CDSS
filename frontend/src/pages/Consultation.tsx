@@ -192,7 +192,7 @@ export default function Consultation() {
 
   return (
     <div className="w-full max-w-6xl mx-auto py-4">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 -mt-[164px]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass text-xs font-medium tracking-wider uppercase text-white/90 mb-4 cursor-default">
             <Sparkles className="h-3.5 w-3.5 text-white/80" />
