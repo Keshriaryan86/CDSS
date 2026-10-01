@@ -56,9 +56,9 @@ export default function Layout() {
       )}
 
       {/* ─── LIQUID GLASS TOP NAVIGATION ─────────────────────────────────── */}
-      <header className="relative z-50 flex items-start justify-between px-5 pt-6 sm:px-8 sm:pt-8 md:px-16 lg:px-20">
+      <header className="relative z-50 flex items-center justify-between px-5 pt-6 pb-4 sm:px-8 sm:pt-8 sm:pb-6 md:px-16 lg:px-20">
         {/* Left: logo */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer group mt-1">
+        <Link to="/" className="flex items-center gap-3 cursor-pointer group">
           <svg
             className="w-8 h-8 md:w-[36px] md:h-[36px] fill-white transition-transform duration-300 group-hover:scale-105"
             viewBox="0 0 256 256"
@@ -69,7 +69,7 @@ export default function Layout() {
 
         {/* Center nav: absolutely spans the full header, centers pill both axes.
             pointer-events-none prevents blocking logo/dropdown clicks. */}
-        <nav className="hidden xl:flex absolute inset-0 items-start justify-center pt-6 sm:pt-8 pointer-events-none">
+        <nav className="hidden xl:flex absolute inset-0 items-center justify-center pointer-events-none">
           <div className="flex items-center space-x-8 px-8 py-3 rounded-full liquid-glass pointer-events-auto">
             <NavLink
               to="/"
@@ -103,13 +103,13 @@ export default function Layout() {
         </nav>
 
         {/* Right: language switcher + desktop dropdown + mobile hamburger */}
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex items-center gap-2">
           {/* Language Switcher - Always visible in header */}
           <LanguageSwitcher />
 
           {/* Desktop dropdown */}
           <div className="hidden xl:inline-flex items-center" ref={dropdownRef}>
-            <div className="relative -top-24">
+            <div className="relative">
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -158,7 +158,7 @@ export default function Layout() {
             aria-label="Toggle menu"
             onClick={() => setMenuOpen(!menuOpen)}
             style={{ zIndex: 10000 }}
-            className="xl:hidden h-10 w-10 rounded-full liquid-glass flex items-center justify-center cursor-pointer relative -top-36"
+            className="xl:hidden h-10 w-10 rounded-full liquid-glass flex items-center justify-center cursor-pointer"
           >
             <Menu
               className={`absolute h-5 w-5 text-white/80 transition-all duration-300 transform ${menuOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
@@ -234,7 +234,7 @@ export default function Layout() {
 
       {/* ─── MAIN PAGE CONTENT OUTLET (z-10) ──────────────────────────────── */}
       <main
-        className={`relative z-20 flex-1 px-5 sm:px-8 md:px-16 lg:px-20 py-8 max-w-7xl mx-auto w-full transition-opacity duration-300 ${menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        className={`relative z-20 flex-1 px-5 sm:px-8 md:px-16 lg:px-20 pt-6 pb-12 max-w-7xl mx-auto w-full transition-opacity duration-300 ${menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
       >
         <Outlet />
