@@ -21,6 +21,7 @@ const weeklyData = [
 export default function Dashboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const username = getUsername();
   const [patients, setPatients] = useState<any[]>([]);
 
   useEffect(() => {
@@ -64,7 +65,7 @@ export default function Dashboard() {
             <span>{t('dashboard.badge')}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-white tracking-tight leading-tight mb-4">
-            {t('dashboard.welcome')} <span className="font-medium">{t('dashboard.doctor')}</span>
+            {t('dashboard.welcome')} <span className="font-medium capitalize">{username}</span>
           </h1>
           <p className="text-white/70 text-sm sm:text-base font-light leading-relaxed mb-8">
             {t('dashboard.subtitle')}
