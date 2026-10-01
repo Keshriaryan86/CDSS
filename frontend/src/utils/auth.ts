@@ -4,9 +4,9 @@
  */
 
 const TOKEN_KEY = 'cdss_token';
-const USER_KEY  = 'cdss_username';
+const USER_KEY = 'cdss_username';
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000';
+const BACKEND = import.meta.env.VITE_BACKEND_URL || 'https://cdss-production.up.railway.app';
 
 /** Read the stored JWT from localStorage */
 export function getToken(): string | null {

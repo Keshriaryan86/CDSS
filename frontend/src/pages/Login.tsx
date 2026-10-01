@@ -4,7 +4,7 @@ import { Stethoscope, Eye, EyeOff, AlertCircle, UserPlus, LogIn } from 'lucide-r
 import { useTranslation } from 'react-i18next';
 import { setSession } from '../utils/auth';
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000';
+const BACKEND = import.meta.env.VITE_BACKEND_URL || 'https://cdss-production.up.railway.app';
 
 type Mode = 'login' | 'register';
 
