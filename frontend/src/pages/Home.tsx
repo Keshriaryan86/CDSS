@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 export default function Home() {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col min-h-0 py-0">
+    <div className="flex flex-col flex-1 justify-center min-h-[calc(100vh-160px)] py-4">
       {/* Top Block */}
-      <div className="-mt-[140px] sm:-mt-[140px] md:-mt-[140px] max-w-2xl">
+      <div className="max-w-2xl">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass text-xs font-medium tracking-wider uppercase text-white/90 mb-6 cursor-default">
           <Sparkles className="h-3.5 w-3.5 text-white/80" />

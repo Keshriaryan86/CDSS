@@ -234,7 +234,7 @@ export default function Layout() {
 
       {/* ─── MAIN PAGE CONTENT OUTLET (z-10) ──────────────────────────────── */}
       <main
-        className={`relative z-20 flex-1 px-5 sm:px-8 md:px-16 lg:px-20 pt-6 pb-12 max-w-7xl mx-auto w-full transition-opacity duration-300 ${menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        className={`relative z-20 flex-1 flex flex-col px-5 sm:px-8 md:px-16 lg:px-20 pt-6 pb-12 max-w-7xl mx-auto w-full transition-opacity duration-300 ${menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
       >
         <Outlet />
